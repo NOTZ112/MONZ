@@ -9,10 +9,20 @@ from database.join_reqs import JoinReqs
 
 
 
+_join_reqs_cache = {}
+
+def _get_join_reqs(channel_id):
+    # Reuse one JoinReqs (and its underlying Mongo connection) per channel
+    # instead of opening a brand new connection on every single check.
+    if channel_id not in _join_reqs_cache:
+        _join_reqs_cache[channel_id] = JoinReqs(channel_id)
+    return _join_reqs_cache[channel_id]
+
+
 async def is_channel_joined(client, user_id, channel_id):
     """Returns True if the user is a member of channel_id, or has a pending
     join request tracked in that channel's JoinReqs DB."""
-    user = await JoinReqs(channel_id).get_user(user_id)
+    user = await _get_join_reqs(channel_id).get_user(user_id)
     if user and user["user_id"] == user_id:
         return True
 
@@ -25,12 +35,12 @@ async def is_channel_joined(client, user_id, channel_id):
 
 
 async def get_missing_channels(client, user_id):
-    """Returns the list of configured force sub channel ids the user has NOT joined yet."""
-    missing = []
-    for channel_id in FORCE_SUB_CHANNELS:
-        if not await is_channel_joined(client, user_id, channel_id):
-            missing.append(channel_id)
-    return missing
+    """Returns the list of configured force sub channel ids the user has NOT joined yet.
+    Checks all channels concurrently instead of one-by-one to keep /start fast."""
+    results = await asyncio.gather(
+        *[is_channel_joined(client, user_id, channel_id) for channel_id in FORCE_SUB_CHANNELS]
+    )
+    return [cid for cid, joined in zip(FORCE_SUB_CHANNELS, results) if not joined]
 
 
 async def is_subscribed(filter, client, update):
@@ -43,6 +53,8 @@ async def is_subscribed(filter, client, update):
         return True
 
     missing = await get_missing_channels(client, user_id)
+    # Stash the result so the fallback handler doesn't have to re-check from scratch.
+    update._missing_fsub_channels = missing
     return len(missing) == 0
 
 
