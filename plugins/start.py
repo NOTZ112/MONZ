@@ -89,7 +89,7 @@ async def start_command(client: Client, message: Message):
                 pass
 
 
-        k = await client.send_message(chat_id = message.from_user.id, text=f"ㅤㅤㅤ❕⌠  𝘐𝘔𝘗𝘖𝘙𝘛𝘈𝘕𝘛 ⌡ ❕\n\n◉ 「  𝘛𝘩𝘪𝘴 𝘷𝘪𝘥𝘦𝘰 / 𝘧𝘪𝘭𝘦 𝘸𝘪𝘭𝘭 𝘣𝘦 𝘥𝘦𝘭𝘦𝘵𝘦𝘥 𝘪𝘯 {file_auto_delete} 𝘮𝘪𝘯𝘶𝘵𝘦𝘴 (𝘋𝘶𝘦 𝘵𝘰 𝘤𝘰𝘱𝘺𝘳𝘪𝘨𝘩𝘵 𝘪𝘴𝘴𝘶𝘦𝘴  」\n\n◉ 「 𝘗𝘭𝘦𝘢𝘴𝘦 𝘧𝘰𝘳𝘸𝘢𝘳𝘥 𝘵𝘩𝘪𝘴 𝘷𝘪𝘥𝘦𝘰 / 𝘧𝘪𝘭𝘦 𝘵𝘰 𝘴𝘰𝘮𝘦𝘸𝘩𝘦𝘳𝘦 𝘦𝘭𝘴𝘦 𝘢𝘯𝘥 𝘴𝘵𝘢𝘳𝘵 𝘥𝘰𝘸𝘯𝘭𝘰𝘢𝘥𝘪𝘯𝘨 𝘵𝘩𝘦𝘳𝘦 」")
+        k = await client.send_message(chat_id = message.from_user.id, text=f"ㅤㅤㅤ❕⌠  𝘐𝘔𝘗𝘖𝘙𝘛𝘈𝘕𝘛 ⌡ ❕\n\n◉ 「  ജോയിൻ / @Malluxix {file_auto_delete} ok  」\n\n◉ 「 Da 」")
         asyncio.create_task(delete_files(madflix_msgs, client, k))
 
         return
@@ -232,7 +232,7 @@ async def delete_files(messages, client, k):
         except Exception as e:
             print(f"The attempt to delete the media {msg.id} was unsuccessful: {e}")
     # await client.send_message(messages[0].chat.id, "Your Video / File Is Successfully Deleted ✅")
-    await k.edit_text("Your Media Is Successfully Deleted ✅")
+    await k.edit_text(" Msg me @Sanasxbot ✅")
     
 
 
